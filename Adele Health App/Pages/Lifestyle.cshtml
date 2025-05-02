@@ -1,0 +1,1002 @@
+﻿@page
+@model Adele_Health_App.Pages.LifestyleModel
+@{
+}
+<style>
+    body {
+        margin: 0;
+        background-color: #f6f8fa;
+    }
+
+    .additional-info {
+        margin-top: 20px;
+        text-align: center; 
+    }
+
+    .info-text {
+        display: flex;
+        align-items: center; 
+        justify-content: center;
+    }
+
+    .sparkles-image {
+        width: 1.2em; 
+        height: 1.2em; 
+        margin-right: 6px; 
+    }
+    .bold-text {
+        font-weight: bold;
+        font-size: 16px;
+    }
+
+    .normal-text {
+        font-weight: normal;
+        font-size: 14px;
+        margin-top: 5px;
+    }
+
+    .expand-all a {
+        font-size: 12px;
+        font-weight: normal;
+    }
+    .header-icon {
+        display: flex;
+        justify-content: center;
+        padding-top: 20px;
+        margin-left: -14px;
+    }
+    .log-form-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-top: 20px;
+    }
+
+    .form-wrapper {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        max-width: 800px;
+        width: 100%;
+    }
+
+    .form-title {
+        align-self: flex-start;
+        font-size: 24px;
+        font-weight: 600;
+        margin-bottom: 20px;
+        margin-left: 5px; 
+    }
+
+    .log-form {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 0px;
+        width: 100%;
+    }
+
+        .log-form input,
+        .log-form select {
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            width: 180px;
+        }
+
+    .form-group {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        position: relative;
+    }
+
+        .form-group label {
+            font-size: 16px;
+            margin-bottom: 5px;
+        }
+
+        .form-group input#glucose {
+            padding-right: 55px; 
+        }
+
+        .form-group .unit {
+            position: absolute;
+            right: 12px;
+            bottom: 11px;
+            font-size: 14px;
+            color: #666;
+            pointer-events: none;
+        }
+
+    .popup-tags-display {
+        margin-top: 10px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .tag-white {
+        background-color: white;
+        color: black;
+        padding: 6px 10px;
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 0.85rem;
+    }
+
+        .tag-white .remove-tag {
+            background: transparent;
+            border: none;
+            color: black;
+            font-weight: bold;
+            cursor: pointer;
+            padding: 0 4px;
+            font-size: 1rem;
+        }
+
+    .tagging-modal-overlay {
+        display: none;
+        position: fixed;
+        z-index: 999;
+        left: 0;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(0,0,0,0.4);
+        justify-content: center;
+        align-items: center;
+    }
+
+    .tagging-modal {
+        background: white;
+        border-radius: 10px;
+        width: 400px;
+        max-height: 80vh;
+        overflow-y: auto;
+        padding: 20px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    }
+
+    .modal-header {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 1.2rem;
+        margin-bottom: 15px;
+    }
+
+    .modal-icon {
+        width: 30px;
+        height: 30px;
+    }
+
+    .tag-search {
+        width: 100%;
+        padding: 8px;
+        margin-bottom: 15px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+
+    .tag-options {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .tag-option {
+        padding: 6px 12px;
+        border-radius: 20px;
+        background-color: #eee;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+        .tag-option:hover {
+            background-color: #ddd;
+        }
+
+    .add-tags-btn {
+        margin-top: 20px;
+        padding: 10px;
+        width: 100%;
+        background-color: #cceeff;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+    }
+
+    .tags-display {
+        margin-top: 10px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+        .tags-display .tag {
+            background-color: #d1f0ff;
+            padding: 6px 10px;
+            border-radius: 16px;
+            font-size: 0.85rem;
+        }
+
+    .notes-box {
+        margin-top: 20px;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+    }
+
+    .notes-box input {
+        width: calc(180px * 4 + 60px);
+        padding: 12px;
+        font-size: 16px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+    }
+
+    .log-button {
+        margin-top: 20px;
+        background-color: #003F61;
+        color: white;
+        padding: 10px 20px;
+        font-size: 16px;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        text-decoration: none; 
+    }
+
+        .log-button:hover {
+            background-color: #002f48;
+        }
+
+    .button-icon {
+        width: 20px;
+        height: 20px;
+    }
+
+    .glucose-container {
+        width: 100%;
+        margin-bottom: 10px;
+        font-family: inherit;
+    }
+
+    .glucose-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        cursor: pointer;
+        font-size: 17px;
+        font-weight: normal;
+        padding: 4px 8px;
+        background-color: #f6f8fa;
+        width: 100%;
+        border-radius: 4px;
+    }
+
+
+    .glucose-left {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .glucose-icon {
+        width: 30px;
+        height: 30px;
+    }
+
+    .dropdown-arrow {
+        transition: transform 0.3s ease;
+    }
+
+    .glucose-header.open .dropdown-arrow {
+        transform: rotate(180deg);
+    }
+
+
+
+
+    .glucose-dropdown-options {
+        display: none; 
+        flex-direction: column;
+        margin-top: 0px;
+        font-size: 14px;
+        background-color: #f6f8fa;
+        border-radius: 4px;
+        padding: 8px;
+    }
+
+    .dropdown-description {
+        font-size: 16px;
+        margin-bottom: 10px;
+        font-weight: normal;
+        color: black;
+    }
+
+    .button-group {
+        display: flex; 
+        justify-content: space-between;
+        gap: 0px; 
+    }
+
+    .dropdown-button {
+        padding: 8px 12px;
+        cursor: pointer;
+        border: 2px solid #ccc;
+        border-radius: 4px;
+        background-color: white; 
+        flex: 1; 
+        text-align: center;
+        transition: background-color 0.3s;
+    }
+
+        .dropdown-button.active {
+            background-color: #f6f8fa; 
+            color: black; 
+        }
+
+        .dropdown-button:hover {
+            background-color: #bbdefb; 
+        }
+
+    .glucose-popup {
+        display: flex;
+        gap: 10px;
+        margin-top: 10px;
+        font-size: 14px;
+        font-weight: 500;
+    }
+
+    .activity-popup {
+        display: flex;
+        flex-direction: column; 
+        align-items: flex-start;
+        gap: 10px;
+        padding: 16px;
+        border-radius: 10px;
+        margin-top: 10px;
+        position: relative;
+    }
+    .yellow {
+        background-color: #fff2cc;
+    }
+
+    .green {
+        background-color: #e5ffcc;
+    }
+
+    .blue {
+        background-color: #e6f3ff;
+    }
+
+    .purple {
+        background-color: #f3e8ff;
+    }
+
+    .red {
+        background-color: #ffe8e8;
+    }
+
+    .orange {
+        background-color: #fce5cd;
+    }
+
+    .popup-header-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+    }
+    .popup-icon {
+        width: 20px;
+        height: 20px;
+        margin-right: 10px;
+    }
+
+    .popup-text {
+        font-size: 14px;
+        font-weight: 500;
+        color: #333;
+        flex-grow: 1;
+    }
+
+    .popup-plus {
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        border: 1px solid #ccc;
+        text-align: center;
+        line-height: 22px;
+        font-size: 16px;
+        color: #333;
+        font-weight: bold;
+        margin-left: 10px;
+    }
+</style>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+         // for my dropdowns
+        const setupDropdown = (headerId, optionsId, popupIds = []) => {
+            const header = document.getElementById(headerId);
+            const options = document.getElementById(optionsId);
+
+            header.addEventListener('click', () => {
+                const isOpen = header.classList.toggle('open');
+                options.style.display = isOpen ? 'block' : 'none';
+
+                if (!isOpen) {
+                    popupIds.forEach(popupId => {
+                        const popup = document.getElementById(popupId);
+                        if (popup) popup.style.display = 'none';
+                    });
+                }
+            });
+        };
+
+        const dropdowns = [
+            { header: 'glucoseHeader', options: 'glucoseOptions', popups: ['glucoseCheckboxPopup'] },
+            { header: 'exerciseHeader', options: 'exerciseOptions', popups: ['activityPopup'] },
+            { header: 'nutritionHeader', options: 'nutritionOptions', popups: ['nutritionPopup'] },
+            { header: 'medicationHeader', options: 'medicationOptions', popups: ['medicationPopup'] },
+            { header: 'hydrationHeader', options: 'hydrationOptions', popups: ['hydrationPopup'] },
+            { header: 'sleepHeader', options: 'sleepOptions', popups: ['sleepPopup'] },
+            { header: 'stressHeader', options: 'stressOptions', popups: ['stressPopup'] }
+        ];
+
+        dropdowns.forEach(d => setupDropdown(d.header, d.options, d.popups));
+
+        const glucoseLowBtn = document.getElementById('glucoseLowButton');
+        const glucoseHighBtn = document.getElementById('glucoseHighButton');
+        const glucosePopup = document.getElementById('glucoseCheckboxPopup');
+        if (glucoseLowBtn) {
+            glucoseLowBtn.addEventListener('click', () => glucosePopup.style.display = 'flex');
+        }
+
+        if (glucoseHighBtn) {
+            glucoseHighBtn.addEventListener('click', () => glucosePopup.style.display = 'flex');
+        }
+
+        const glucoseNormalBtn = document.getElementById('glucoseNormalButton');
+        if (glucoseNormalBtn) {
+            glucoseNormalBtn.addEventListener('click', () => {
+                glucosePopup.style.display = 'none';
+                document.getElementById('unusualReadingCheckbox').checked = false;
+            });
+        }
+
+        const showPopup = (buttonIds, popupId) => {
+            const popup = document.getElementById(popupId);
+            buttonIds.forEach(id => {
+                const btn = document.getElementById(id);
+                if (btn) {
+                    btn.addEventListener('click', () => popup.style.display = 'flex');
+                }
+            });
+        };
+
+        showPopup(['exerciseLowButton', 'exerciseNormalButton', 'exerciseHighButton'], 'activityPopup');
+        showPopup(['nutritionLowButton', 'nutritionNormalButton', 'nutritionHighButton'], 'nutritionPopup');
+        showPopup(['medicationLowButton', 'medicationNormalButton', 'medicationHighButton'], 'medicationPopup');
+        showPopup(['hydrationLowButton', 'hydrationNormalButton', 'hydrationHighButton'], 'hydrationPopup');
+        showPopup(['sleepLowButton', 'sleepNormalButton', 'sleepHighButton'], 'sleepPopup');
+        showPopup(['stressLowButton', 'stressNormalButton', 'stressHighButton'], 'stressPopup');
+
+        const buttonGroups = document.querySelectorAll('.button-group');
+        buttonGroups.forEach(group => {
+            const buttons = group.querySelectorAll('.dropdown-button');
+            buttons.forEach(button => {
+                button.addEventListener('click', () => {
+                    if (button.classList.contains('active')) {
+                        button.classList.remove('active');
+                    } else {
+                        buttons.forEach(btn => btn.classList.remove('active'));
+                        button.classList.add('active');
+                    }
+                });
+            });
+        });
+
+        document.querySelector('.expand-link')?.addEventListener('click', function (e) {
+            e.preventDefault();
+
+            dropdowns.forEach(d => {
+                const header = document.getElementById(d.header);
+                const options = document.getElementById(d.options);
+
+                if (header && options && !header.classList.contains('open')) {
+                    header.classList.add('open');
+                    options.style.display = 'block';
+                }
+            });
+        });
+        document.querySelectorAll("#glucoseOptions .dropdown-button").forEach(button => {
+            button.addEventListener("click", function() {
+            const glucoseValue = this.textContent;
+            document.getElementById("selectedGlucose").value = glucoseValue;
+            });
+        });
+        document.querySelectorAll("#exerciseOptions .dropdown-button").forEach(button => {
+            button.addEventListener("click", function() {
+            const exerciseValue = this.textContent;
+            document.getElementById("selectedExercise").value = exerciseValue;
+            });
+        });
+        document.querySelectorAll("#nutritionOptions .dropdown-button").forEach(button => {
+            button.addEventListener("click", function() {
+            const nutritionValue = this.textContent;
+            document.getElementById("selectedNutrition").value = nutritionValue;
+            });
+        });
+        document.querySelectorAll("#medicationOptions .dropdown-button").forEach(button => {
+            button.addEventListener("click", function() {
+            const medicationValue = this.textContent;
+            document.getElementById("selectedMedication").value = medicationValue;
+            });
+        });
+        document.querySelectorAll("#hydrationOptions .dropdown-button").forEach(button => {
+            button.addEventListener("click", function() {
+            const hydrationValue = this.textContent;
+            document.getElementById("selectedHydration").value = hydrationValue;
+            });
+        });
+        document.querySelectorAll("#sleepOptions .dropdown-button").forEach(button => {
+            button.addEventListener("click", function() {
+            const sleepValue = this.textContent;
+            document.getElementById("selectedSleep").value = sleepValue;
+            });
+        });
+        document.querySelectorAll("#stressOptions .dropdown-button").forEach(button => {
+            button.addEventListener("click", function() {
+            const stressValue = this.textContent;
+            document.getElementById("selectedStress").value = stressValue;
+            });
+        });
+        // here comes the tagging
+        const modal = document.getElementById('taggingModal');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalIcon = document.getElementById('modalIcon');
+        const tagSearch = document.getElementById('tagSearch');
+        const tagOptions = document.getElementById('tagOptions');
+        const addTagsBtn = document.getElementById('addTagsBtn');
+
+        const tagsByCategory = {
+            Hydration: {
+                icon: '/images/hydration.png',
+                tags: ['Coke', 'Sprite', 'Water', 'Gatorade', 'Coffee', 'Tea']
+            },
+            Nutrition: {
+                icon: '/images/nutrition.png',
+                tags: ['Chicken', 'Beef', 'Steak', 'French Fries']
+            },
+            Exercise: {
+                icon: '/images/exercise.png',
+                tags: ['Walking', 'Running', 'Yoga', 'Gym', 'Cycling']
+            },
+            Medication: {
+                icon: '/images/medication.png',
+                tags: ['Insulin', 'Metformin', 'Advil']
+            },
+            Sleep: {
+                icon: '/images/sleep.png',
+                tags: ['Nap', 'Deep Sleep', 'Interrupted']
+            },
+            Stress: {
+                icon: '/images/stress.png',
+                tags: ['Work', 'Family', 'Finance', 'Health']
+            }
+        };
+
+        let selectedTags = {
+            HydrationTags: [],
+            NutritionTags: [],
+            ExerciseTags: [],
+            MedicationTags: [],
+            SleepTags: [],
+            StressTags: [],
+            GlucoseTags: []
+        };
+
+        function renderTagOptions(tags) {
+            tagOptions.innerHTML = '';
+            tags.forEach(tag => {
+                const tagEl = document.createElement('div');
+                tagEl.className = 'tag-option';
+                tagEl.textContent = tag;
+
+                if (selectedTags[currentCategory]?.includes(tag)) {
+                    tagEl.style.backgroundColor = '#a3e6ff';
+                }
+
+                tagEl.addEventListener('click', () => {
+                    if (!selectedTags[currentCategory]?.includes(tag)) {
+                        selectedTags[currentCategory].push(tag);
+                        tagEl.style.backgroundColor = '#a3e6ff';
+                    } else {
+                        selectedTags[currentCategory] = selectedTags[currentCategory].filter(t => t !== tag);
+                        tagEl.style.backgroundColor = '';
+                    }
+                });
+
+                tagOptions.appendChild(tagEl);
+            });
+        }
+
+        tagSearch.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                const value = tagSearch.value.trim();
+                if (value && !selectedTags[currentCategory]?.includes(value)) {
+                    selectedTags[currentCategory].push(value);
+                    tagSearch.value = '';
+                    renderTagOptions(tagsByCategory[currentCategory].tags);
+                }
+            }
+        });
+
+        addTagsBtn.addEventListener('click', function(event) {
+            event.preventDefault();
+
+            document.getElementById("addedTags").value = getAllSelectedTags().join(",");
+
+            if (tagDisplayElement) {
+                tagDisplayElement.innerHTML = '';
+
+                selectedTags[currentCategory].forEach(tag => {
+                    const el = document.createElement('div');
+                    el.className = 'tag-white';
+
+                    const span = document.createElement('span');
+                    span.textContent = tag;
+
+                    const removeBtn = document.createElement('button');
+                    removeBtn.innerHTML = '&times;';
+                    removeBtn.className = 'remove-tag';
+                    removeBtn.addEventListener('click', () => {
+                        el.remove();
+                        selectedTags[currentCategory] = selectedTags[currentCategory].filter(t => t !== tag);
+                    });
+
+                    el.appendChild(span);
+                    el.appendChild(removeBtn);
+                    tagDisplayElement.appendChild(el);
+                });
+            }
+
+            modal.style.display = 'none';
+        });
+
+        modal.addEventListener('click', e => {
+            if (e.target === modal) modal.style.display = 'none';
+        });
+
+        function openTaggingModal(category, displayElementId) {
+            currentCategory = category;
+            tagDisplayElement = document.getElementById(displayElementId);
+            const { icon, tags } = tagsByCategory[currentCategory];
+            modalIcon.src = icon;
+            modalTitle.textContent = currentCategory;
+
+            selectedTags[currentCategory] = selectedTags[currentCategory] || [];
+
+            tagSearch.value = '';
+            renderTagOptions(tags);
+            modal.style.display = 'flex';
+        }
+
+        document.getElementById('hydrationPlusButton')?.addEventListener('click', () => {
+            openTaggingModal('Hydration', 'hydrationTagsDisplay');
+        });
+
+        document.getElementById('exercisePlusButton')?.addEventListener('click', () => {
+            openTaggingModal('Exercise', 'exerciseTagsDisplay');
+        });
+
+        document.getElementById('nutritionPlusButton')?.addEventListener('click', () => {
+            openTaggingModal('Nutrition', 'nutritionTagsDisplay');
+        });
+
+        document.getElementById('medicationPlusButton')?.addEventListener('click', () => {
+            openTaggingModal('Medication', 'medicationTagsDisplay');
+        });
+
+        document.getElementById('sleepPlusButton')?.addEventListener('click', () => {
+            openTaggingModal('Sleep', 'sleepTagsDisplay');
+        });
+
+        document.getElementById('stressPlusButton')?.addEventListener('click', () => {
+            openTaggingModal('Stress', 'stressTagsDisplay');
+        });
+
+        document.getElementById("logForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+
+            const addedTags = document.getElementById("addedTags").value;
+
+            this.submit();
+        });
+
+        // Function to get all selected tags from all categories
+        function getAllSelectedTags() {
+            const allTags = [];
+
+            // Loop through all categories and push selected tags to the array
+            Object.keys(selectedTags).forEach(category => {
+                if (selectedTags[category]?.length > 0) {
+                    allTags.push(...selectedTags[category]);
+                }
+            });
+            return allTags;
+        }
+});
+</script>
+
+<div class="header-icon">
+    <img src="~/images/adelesmall.png" alt="Small Icon" style="width: 40px; height: 30px;" />
+</div>
+
+<div class="log-form-container">
+    <div class="form-wrapper">
+        <div class="form-title">Log a Reading</div>
+
+        <form class="log-form" id="logForm" method="post">
+            <div class="form-group">
+                <label for="date">Date *</label>
+                <input id="date" name="date" type="date" value="@Model.Date" required />
+            </div>
+
+            <div class="form-group">
+                <label for="time">Time *</label>
+                <input id="time" name="time" type="time" value="@Model.Time" required />
+            </div>
+
+            <div class="form-group">
+                <label for="glucose">Glucose *</label>
+                <input id="glucose" name="glucose" type="text" value="@Model.Glucose" placeholder="i.e. 82" required pattern="\d*" />
+                <span class="unit"> mg/DL</span>
+            </div>
+
+            <div class="form-group">
+                <label for="mealTiming">Meal Timing *</label>
+                <select id="mealTiming" name="mealTiming" required>
+                    <option disabled selected>i.e. Pre-Meal</option>
+                    <option value="Pre-Meal" selected="@("Pre-Meal" == Model.MealTiming)">Pre-Meal</option>
+                    <option value="Post-Meal" selected="@("Post-Meal" == Model.MealTiming)">Post-Meal</option>
+                </select>
+            </div>
+
+            <div class="additional-info">
+                <div class="info-text">
+                    <img src="~/images/sparkles.png" alt="Sparkles" class="sparkles-image" />
+                    <span class="bold-text">Tell me about your reading</span>
+                </div>
+                <div class="normal-text">Add more details to gain insights into your health.</div>
+                <div class="expand-all">
+                    <a href="#" class="expand-link" style="color: blue; font-size: smaller;">Expand all</a>
+                </div>
+            </div>
+
+            @*Glucose dropdown*@
+            <div class="glucose-container">
+                <div class="glucose-header" id="glucoseHeader">
+                    <div class="glucose-left">
+                        <img src="~/images/glucose.png" alt="Glucose Icon" class="glucose-icon" />
+                        <span>Glucose</span>
+                    </div>
+                    <span class="dropdown-arrow">&#9662;</span>
+                </div>
+                <div class="glucose-dropdown-options" id="glucoseOptions">
+                    <div class="dropdown-description">How would you describe your reading?</div>
+                    <div class="button-group">
+                        <div class="dropdown-button" id="glucoseLowButton">Low</div>
+                        <div class="dropdown-button" id="glucoseNormalButton">Normal</div>
+                        <div class="dropdown-button" id="glucoseHighButton">High</div>
+                    </div>
+                </div>
+            </div>
+            <div id="glucoseCheckboxPopup" class="glucose-popup" style="display: none;">
+                <input type="checkbox" id="unusualReadingCheckbox" />
+                <label for="unusualReadingCheckbox">This reading is unusual</label>
+            </div>
+            @*Exercise dropdown*@
+            <div class="glucose-container">
+                <div class="glucose-header" id="exerciseHeader">
+                    <div class="glucose-left">
+                        <img src="~/images/exercise.png" alt="Exercise Icon" class="glucose-icon" />
+                        <span>Exercise</span>
+                    </div>
+                    <span class="dropdown-arrow">&#9662;</span>
+                </div>
+                <div class="glucose-dropdown-options" id="exerciseOptions">
+                    <div class="dropdown-description">How was your activity level?</div>
+                    <div class="button-group">
+                        <div class="dropdown-button" id="exerciseLowButton">Inactive</div>
+                        <div class="dropdown-button" id="exerciseNormalButton">Light</div>
+                        <div class="dropdown-button" id="exerciseHighButton">Intense</div>
+                    </div>
+                </div>
+            </div>
+            <div id="activityPopup" class="activity-popup orange" style="display: none;">
+                <img src="~/images/sparkles.png" alt="Sparkles" class="popup-icon" />
+                <div class="popup-header-row">
+                    <span class="popup-text">What type of activity?</span>
+                    <div class="popup-plus" id="exercisePlusButton">+</div>
+                </div>
+                <div id="exerciseTagsDisplay" class="tags-display"></div>
+            </div>
+            <div id="exerciseTagsDisplay" class="tags-display"></div>
+            @*Nutrition dropdown*@
+            <div class="glucose-container">
+                <div class="glucose-header" id="nutritionHeader">
+                    <div class="glucose-left">
+                        <img src="~/images/nutrition.png" alt="Nutrition Icon" class="glucose-icon" />
+                        <span>Nutrition</span>
+                    </div>
+                    <span class="dropdown-arrow">&#9662;</span>
+                </div>
+                <div class="glucose-dropdown-options" id="nutritionOptions">
+                    <div class="dropdown-description">How would you describe your diet?</div>
+                    <div class="button-group">
+                        <div class="dropdown-button" id="nutritionLowButton">Poor</div>
+                        <div class="dropdown-button" id="nutritionNormalButton">Alright</div>
+                        <div class="dropdown-button" id="nutritionHighButton">Balanced</div>
+                    </div>
+                </div>
+            </div>
+            <div id="nutritionPopup" class="activity-popup yellow" style="display: none;">
+                <img src="~/images/sparkles.png" alt="Sparkles" class="popup-icon" />
+                <div class="popup-header-row">
+                    <span class="popup-text">What did you eat?</span>
+                    <div class="popup-plus" id="nutritionPlusButton">+</div>
+                </div>
+                <div id="nutritionTagsDisplay" class="tags-display"></div>
+            </div>
+            @*Medication dropdown*@
+            <div class="glucose-container">
+                <div class="glucose-header" id="medicationHeader">
+                    <div class="glucose-left">
+                        <img src="~/images/medication.png" alt="medication Icon" class="glucose-icon" />
+                        <span>Medication</span>
+                    </div>
+                    <span class="dropdown-arrow">&#9662;</span>
+                </div>
+                <div class="glucose-dropdown-options" id="medicationOptions">
+                    <div class="dropdown-description">Did you take any medication?</div>
+                    <div class="button-group">
+                        <div class="dropdown-button" id="medicationLowButton">None Taken</div>
+                        <div class="dropdown-button" id="medicationNormalButton">Some Taken</div>
+                        <div class="dropdown-button" id="medicationHighButton">All Taken</div>
+                    </div>
+                </div>
+            </div>
+            <div id="medicationPopup" class="activity-popup green" style="display: none;">
+                <img src="~/images/sparkles.png" alt="Sparkles" class="popup-icon" />
+                <div class="popup-header-row">
+                    <span class="popup-text">What did you take?</span>
+                    <div class="popup-plus" id="medicationPlusButton">+</div>
+                </div>
+                <div id="medicationTagsDisplay" class="tags-display"></div>
+            </div>
+            <div id="medicationTagsDisplay" class="tags-display"></div>
+            @*Hydration dropdown*@
+            <div class="glucose-container">
+                <div class="glucose-header" id="hydrationHeader">
+                    <div class="glucose-left">
+                        <img src="~/images/hydration.png" alt="hydration Icon" class="glucose-icon" />
+                        <span>Hydration</span>
+                    </div>
+                    <span class="dropdown-arrow">&#9662;</span>
+                </div>
+                <div class="glucose-dropdown-options" id="hydrationOptions">
+                    <div class="dropdown-description">How much water did you drink?</div>
+                    <div class="button-group">
+                        <div class="dropdown-button" id="hydrationLowButton">&lt; 16oz</div>
+                        <div class="dropdown-button" id="hydrationNormalButton">16oz-48oz</div>
+                        <div class="dropdown-button" id="hydrationHighButton">&gt; 48oz</div>
+                    </div>
+                </div>
+            </div>
+            <div id="hydrationPopup" class="activity-popup blue" style="display: none;">
+                <img src="~/images/sparkles.png" alt="Sparkles" class="popup-icon" />
+
+                <div class="popup-header-row">
+                    <span class="popup-text">What else did you drink?</span>
+                    <div class="popup-plus" id="hydrationPlusButton">+</div>
+                </div>
+
+                <div id="hydrationTagsDisplay" class="tags-display"></div>
+            </div>
+            @*Sleep dropdown*@
+            <div class="glucose-container">
+                <div class="glucose-header" id="sleepHeader">
+                    <div class="glucose-left">
+                        <img src="~/images/sleep.png" alt="sleep Icon" class="glucose-icon" />
+                        <span>Sleep</span>
+                    </div>
+                    <span class="dropdown-arrow">&#9662;</span>
+                </div>
+                <div class="glucose-dropdown-options" id="sleepOptions">
+                    <div class="dropdown-description">How long did you sleep?</div>
+                    <div class="button-group">
+                        <div class="dropdown-button" id="sleepLowButton">&lt; 7 hrs</div>
+                        <div class="dropdown-button" id="sleepNormalButton">7 to 8 hrs</div>
+                        <div class="dropdown-button" id="sleepHighButton">&gt; 8 hrs</div>
+                    </div>
+                </div>
+            </div>
+            <div id="sleepPopup" class="activity-popup purple" style="display: none;">
+                <img src="~/images/sparkles.png" alt="Sparkles" class="popup-icon" />
+                <div class="popup-header-row">
+                    <span class="popup-text">What impacted your sleep?</span>
+                    <div class="popup-plus" id="sleepPlusButton">+</div>
+                </div>
+                <div id="sleepTagsDisplay" class="tags-display"></div>
+            </div>
+            @*Stress dropdown*@
+            <div class="glucose-container">
+                <div class="glucose-header" id="stressHeader">
+                    <div class="glucose-left">
+                        <img src="~/images/stress.png" alt="stress Icon" class="glucose-icon" />
+                        <span>Stress</span>
+                    </div>
+                    <span class="dropdown-arrow">&#9662;</span>
+                </div>
+                <div class="glucose-dropdown-options" id="stressOptions">
+                    <div class="dropdown-description">What was your level of stress?</div>
+                    <div class="button-group">
+                        <div class="dropdown-button" id="stressLowButton">Low</div>
+                        <div class="dropdown-button" id="stressNormalButton">Moderate</div>
+                        <div class="dropdown-button" id="stressHighButton">High</div>
+                    </div>
+                </div>
+            </div>
+            <div id="stressPopup" class="activity-popup red" style="display: none;">
+                <img src="~/images/sparkles.png" alt="Sparkles" class="popup-icon" />
+                <div class="popup-header-row">
+                    <span class="popup-text">What impacted your stress?</span>
+                    <div class="popup-plus" id="stressPlusButton">+</div>
+                </div>
+                <div id="stressTagsDisplay" class="tags-display"></div>
+            </div>
+
+            <div id="taggingModal" class="tagging-modal-overlay">
+                <div class="tagging-modal">
+                    <div class="modal-header">
+                        <img id="modalIcon" src="" alt="Icon" class="modal-icon">
+                        <span id="modalTitle">Category</span>
+                    </div>
+                    <input type="text" id="tagSearch" placeholder="Search tags..." class="tag-search">
+                    <div id="tagOptions" class="tag-options"></div>
+                    <button id="addTagsBtn" class="add-tags-btn">Add Tags</button>
+                </div>
+            </div>
+            <input type="hidden" id="selectedGlucose" name="selectedGlucose" />
+            <input type="hidden" id="selectedExercise" name="selectedExercise" />
+            <input type="hidden" id="selectedNutrition" name="selectedNutrition" />
+            <input type="hidden" id="selectedMedication" name="selectedMedication" />
+            <input type="hidden" id="selectedHydration" name="selectedHydration" />
+            <input type="hidden" id="selectedSleep" name="selectedSleep" />
+            <input type="hidden" id="selectedStress" name="selectedStress" />
+            <input type="hidden" id="addedTags" name="addedTags" />
+            <div class="notes-box">
+                <input name="notes" type="text" placeholder="Type or speak any additional notes" value="@Model.Notes" />
+            </div>
+            <div class="form-group">
+                <button type="submit" class="log-button">
+                    <img src="~/images/bookmark.png" alt="Bookmark Icon" class="button-icon" />
+                    Add to Log
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

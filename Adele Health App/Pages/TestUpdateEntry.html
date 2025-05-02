@@ -1,0 +1,55 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Update Entry Test</title>
+</head>
+<body>
+    <h2>Test POST to /Api/UpdateEntry</h2>
+
+    <form id="updateForm">
+        <label>Entry ID: <input type="number" name="id" value="1" required></label><br><br>
+        <label>Time (hh:mm AM/PM): <input type="text" name="time" value="9:05 PM" required></label><br><br>
+        <label>Reading (mg/dL): <input type="text" name="reading" value="110" required></label><br><br>
+        <label>
+            Meal Timing:
+            <select name="mealTiming">
+                <option>Before Breakfast</option>
+                <option>After Breakfast</option>
+                <option>Before Lunch</option>
+                <option>After Lunch</option>
+                <option>Before Dinner</option>
+                <option>After Dinner</option>
+                <option>Snack</option>
+            </select>
+        </label><br><br>
+        <button type="submit">Send Update</button>
+    </form>
+
+    <pre id="result"></pre>
+
+    <script>
+    document.getElementById("updateForm").addEventListener("submit", function (e) {
+      e.preventDefault();
+
+      const formData = new FormData(this);
+      const params = new URLSearchParams(formData);
+
+      fetch("http://localhost:5116/Api/UpdateEntry", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded"
+        },
+        body: params
+      })
+      .then(res => res.json())
+      .then(data => {
+        document.getElementById("result").textContent = JSON.stringify(data, null, 2);
+      })
+      .catch(err => {
+        document.getElementById("result").textContent = "Error: " + err;
+      });
+    });
+    </script>
+</body>
+</html>

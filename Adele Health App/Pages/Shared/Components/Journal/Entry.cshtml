@@ -1,0 +1,184 @@
+@model Adele_Health_App.Models.EntryModel
+
+<div style="position: relative; display: inline-block; width: fit-content;" id="entryWrapper-@Model.Id" data-date="@Model.Date" data-time="@Model.Time">
+    <!-- View Mode -->
+    <div class="entry-view" style="background: white; border-radius: 16px; display: inline-flex; flex-direction: column; justify-content: flex-start; align-items: flex-start;">
+        <div style="width: 343px; background: white; border-radius: 16px; outline: 0.75px solid #D5D7DA; outline-offset: -0.75px; display: flex; flex-direction: column; align-items: center;">
+            <div style="width: 100%; padding: 16px 16px 12px 16px; border-top-left-radius: 16px; border-top-right-radius: 16px; border-bottom: 1px solid #D5D7DA; display: flex; flex-direction: column; gap: 16px;">
+                <div style="display: flex; align-items: center; justify-content: space-between; width: 100%; gap: 12px;">
+                    <div style="display: flex; flex-direction: column; gap: 4px;">
+                        <div style="display: flex; align-items: center; gap: 6px;">
+                            <div style="width: 16px; height: 16px; position: relative;">
+                                <svg viewBox="0 0 24 24" fill="none" style="width: 16px; height: 16px; position: absolute; top: 0; left: 0;">
+                                    <circle cx="12" cy="12" r="9" stroke="#033D60" stroke-width="1.33" />
+                                    <path d="M12 7v5l3 2" stroke="#033D60" stroke-width="1.33" stroke-linecap="round" stroke-linejoin="round" />
+                                </svg>
+                            </div>
+                            <div id="entry-time-@Model.Id" class="entry-time" style="color: #313537; font-size: 12px; font-family: 'SF Pro'; font-weight: 400;">@Model.Time</div>
+                        </div>
+                        <div>
+                            <span id="entry-reading-@Model.Id" class="entry-reading" style="color: #313537; font-size: 24px; font-family: 'SF Pro'; font-weight: 700;">@Model.Reading</span>
+                            <span style="color: #313537; font-size: 12px; font-family: 'SF Pro'; font-weight: 700;">mg/dL</span>
+                        </div>
+                        <div id="entry-mealtiming-@Model.Id" class="entry-meal" style="color: #313537; font-size: 12px; font-family: 'SF Pro'; font-weight: 400;">@Model.MealTiming</div>
+                    </div>
+
+                    <!-- Edit Button at Top Right -->
+                    <button type="button" class="edit-entry-button" style="all: unset; cursor: pointer;">
+                        <svg viewBox="0 0 24 24" fill="none" style="width: 16px; height: 16px; position: absolute; top: 0; left: 0;">
+                            <path d="M15.25 4.25l4.5 4.5-12 12H3.25v-4.5l12-12zM14 6l4 4" stroke="#023451" stroke-width="1.33" stroke-linecap="round" stroke-linejoin="round"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <button type="button" class="entry-details-toggle" style="all: unset; cursor: pointer; width: 100%;">
+                <div style="width: 100%; padding: 12px 16px 16px 16px; background: rgba(232, 240, 247, 0.1); border-bottom-left-radius: 16px; border-bottom-right-radius: 16px; display: flex; align-items: center; gap: 8px;">
+                    <div style="color: #023451; font-size: 14px; font-family: 'SF Pro'; font-weight: 590; display: flex; align-items: center; gap: 4px;">
+                        More Details
+                        <div style="width: 16px; height: 16px; position: relative;">
+                            <svg viewBox="0 0 24 24" fill="none" style="width: 16px; height: 16px; position: absolute; top: 0; left: 0;">
+                                <path d="M9 6l6 6-6 6" stroke="#023451" stroke-width="1.67" stroke-linecap="round" stroke-linejoin="round" />
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            </button>
+        </div>
+    </div>
+
+    <!-- Editing Mode -->
+    <div class="entry-edit" style="display: none; width: 343px; background: white; border-radius: 16px; outline: 0.75px solid #D5D7DA; outline-offset: -0.75px; padding: 16px; flex-direction: column; gap: 16px;">
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+            <label style="font-size: 12px;">Time (hh:mm AM/PM)</label>
+            <input type="text" class="edit-time" style="border: 1px solid #D5D7DA; padding: 8px; border-radius: 8px;" value="@Model.Time" />
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+            <label style="font-size: 12px;">Reading (mg/dL)</label>
+            <input type="number" min="0" class="edit-reading" style="border: 1px solid #D5D7DA; padding: 8px; border-radius: 8px;" value="@Model.Reading" />
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+            <label style="font-size: 12px;">Meal Timing</label>
+            <select class="edit-meal" style="border: 1px solid #D5D7DA; padding: 8px; border-radius: 8px;">
+                <option>Before Breakfast</option>
+                <option>After Breakfast</option>
+                <option>Before Lunch</option>
+                <option>After Lunch</option>
+                <option>Before Dinner</option>
+                <option>After Dinner</option>
+                <option>Snack</option>
+            </select>
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 12px;">
+            <button type="button" class="cancel-edit" style="padding: 8px 12px; border: 1px solid #D5D7DA; border-radius: 8px; background: white;">Cancel</button>
+            <button type="button" class="save-edit" style="padding: 8px 12px; border-radius: 8px; background: #2C76AA; color: white;">Save</button>
+        </div>
+    </div>
+
+    <!-- Entry Details Modal -->
+    <div id="entry-modal-@Model.Id" class="entry-details-modal" style="display: none; position: fixed; z-index: 100; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); justify-content: center; align-items: center;">
+        <div class="entry-details-popup" style="position: relative;" onclick="event.stopPropagation()">
+            <partial name="Components/Journal/EntryDetails" model="Model" />
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        document.querySelectorAll(".entry-details-toggle").forEach(button => {
+            const wrapper = button.closest("[id^='entryWrapper']");
+            const modal = wrapper.querySelector(".entry-details-modal");
+
+            button.addEventListener("click", function (e) {
+                e.stopPropagation();
+                document.querySelectorAll(".entry-details-modal").forEach(m => m.style.display = "none");
+                modal.style.display = "flex";
+
+                document.addEventListener("click", function outsideClickListener(event) {
+                    if (!modal.contains(event.target)) {
+                        modal.style.display = "none";
+                        document.removeEventListener("click", outsideClickListener);
+                    }
+                });
+            });
+        });
+
+        document.querySelectorAll(".edit-entry-button").forEach(editBtn => {
+            editBtn.addEventListener("click", function () {
+                const wrapper = editBtn.closest("[id^='entryWrapper']");
+                wrapper.querySelector(".entry-view").style.display = "none";
+                wrapper.querySelector(".entry-edit").style.display = "flex";
+            });
+        });
+
+        document.querySelectorAll(".cancel-edit").forEach(cancelBtn => {
+            cancelBtn.addEventListener("click", function () {
+                const wrapper = cancelBtn.closest("[id^='entryWrapper']");
+                wrapper.querySelector(".entry-edit").style.display = "none";
+                wrapper.querySelector(".entry-view").style.display = "inline-flex";
+            });
+        });
+
+        document.querySelectorAll(".save-edit").forEach(saveBtn => {
+            saveBtn.addEventListener("click", function () {
+                const wrapper = saveBtn.closest("[id^='entryWrapper']");
+                const oldTime = wrapper.getAttribute("data-time");
+
+                const timeInput = wrapper.querySelector(".edit-time").value.trim();
+                const readingInput = wrapper.querySelector(".edit-reading").value.trim();
+                const mealInput = wrapper.querySelector(".edit-meal").value.trim();
+
+                const timeRegex = /^(0?[1-9]|1[0-2]):[0-5][0-9] (AM|PM)$/i;
+                if (!timeRegex.test(timeInput)) {
+                    alert("Invalid time format. Use hh:mm AM/PM.");
+                    return;
+                }
+
+                if (isNaN(readingInput) || readingInput < 0) {
+                    alert("Reading must be a positive number.");
+                    return;
+                }
+
+                const entryId = wrapper.id.replace('entryWrapper-', '');
+
+                // Async update
+                fetch('/Api/UpdateEntry', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body: new URLSearchParams({
+                        id: entryId,
+                        time: timeInput,
+                        reading: readingInput,
+                        mealTiming: mealInput
+                    })
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        wrapper.querySelector(".entry-time").textContent = timeInput;
+                        wrapper.querySelector(".entry-reading").textContent = readingInput;
+                        wrapper.querySelector(".entry-meal").textContent = mealInput;
+
+                        wrapper.querySelector(".entry-edit").style.display = "none";
+                        wrapper.querySelector(".entry-view").style.display = "inline-flex";
+
+                        wrapper.setAttribute("data-time", timeInput);
+
+                        if (typeof updateEntryDetails === 'function') {
+                            updateEntryDetails(entryId, timeInput, readingInput, mealInput);
+                        }
+                        if (typeof updateGlucoseGraph === 'function') {
+                            updateGlucoseGraph(timeInput, readingInput, oldTime);
+                        }
+                    } else {
+                        alert("Failed to save changes.");
+                    }
+                })
+                .catch(() => alert("Error occurred while saving changes."));
+            });
+        });
+    });
+</script>

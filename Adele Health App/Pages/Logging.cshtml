@@ -1,0 +1,180 @@
+﻿@page
+@model Adele_Health_App.Pages.LoggingModel
+@{
+}
+
+<style>
+    body {
+        margin: 0;
+        background-color: #f6f8fa;
+    }
+
+    .header-icon {
+        display: flex;
+        justify-content: center;
+        padding-top: 20px;
+        margin-left: -14px;
+    }
+
+    .youmatter-img {
+        display: block;
+        margin: 20px auto;
+        margin-top: 200px;
+        margin-bottom: 200px;
+        width: 250px;
+        opacity: 0.5;
+    }
+    .log-form-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-top: 40px;
+    }
+
+    .form-wrapper {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        max-width: 800px;
+        width: 100%;
+    }
+
+    .form-title {
+        align-self: flex-start;
+        font-size: 24px;
+        font-weight: 600;
+        margin-bottom: 20px;
+        margin-left: 5px;
+    }
+
+    .log-form {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 20px;
+        width: 100%;
+    }
+
+        .log-form input,
+        .log-form select {
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            width: 180px;
+        }
+
+    .form-group {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        position: relative;
+    }
+
+        .form-group label {
+            font-size: 16px;
+            margin-bottom: 5px;
+        }
+
+        .form-group input#glucose {
+            padding-right: 55px;
+        }
+
+        .form-group .unit {
+            position: absolute;
+            right: 12px;
+            bottom: 11px;
+            font-size: 14px;
+            color: #666;
+            pointer-events: none;
+        }
+
+    .notes-box {
+        margin-top: 20px;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+    }
+
+        .notes-box input {
+            width: calc(180px * 4 + 60px);
+            padding: 12px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+        }
+
+    .log-button {
+        margin-top: 20px;
+        background-color: #003F61;
+        color: white;
+        padding: 10px 20px;
+        font-size: 16px;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        text-decoration: none;
+    }
+
+        .log-button:hover {
+            background-color: #002f48;
+        }
+
+    .button-icon {
+        width: 20px;
+        height: 20px;
+    }
+</style>
+
+<div class="header-icon">
+    <img src="~/images/adelesmall.png" alt="Small Icon" style="width: 40px; height: 30px;" />
+</div>
+<img src="~/images/adeleyoumatter.png" alt="Adele You Matter" class="youmatter-img" />
+
+<div class="log-form-container">
+    <div class="form-wrapper">
+        <div class="form-title">Log a Reading</div>
+
+        <form class="log-form" method="get" asp-page="/Lifestyle">
+            <div class="form-group">
+                <label for="date">Date *</label>
+                <input id="date" name="date" type="date" value="@Model.Date" required />
+            </div>
+
+            <div class="form-group">
+                <label for="time">Time *</label>
+                <input id="time" name="time" type="time" value="@Model.Time" required />
+            </div>
+
+            <div class="form-group">
+                <label for="glucose">Glucose *</label>
+                <input id="glucose" name="glucose" type="text" value="@Model.Glucose" placeholder="i.e. 82" required pattern="\d*" />
+                <span class="unit"> mg/DL</span>
+            </div>
+
+            <div class="form-group">
+                <label for="mealTiming">Meal Timing *</label>
+                <select id="mealTiming" name="mealTiming" required>
+                    <option disabled selected>i.e. Pre-Meal</option>
+                    <option value="Pre-Meal" selected="@("Pre-Meal" == Model.MealTiming)">Pre-Meal</option>
+                    <option value="Post-Meal" selected="@("Post-Meal" == Model.MealTiming)">Post-Meal</option>
+                </select>
+            </div>
+
+            <div class="notes-box">
+                <input name="notes" type="text" placeholder="Type or speak any additional notes" value="@Model.Notes" />
+            </div>
+
+            <button type="submit" class="log-button">
+                <img src="~/images/bookmark.png" alt="Bookmark Icon" class="button-icon" />
+                Add to Log
+            </button>
+
+        </form>
+
+
+    </div>
+</div>

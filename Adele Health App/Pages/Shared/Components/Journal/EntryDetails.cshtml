@@ -1,0 +1,329 @@
+@model Adele_Health_App.Models.EntryModel
+@{
+    var entryIndex = (int)ViewData["EntryIndex"];
+    var entryTotal = (int)ViewData["EntryTotal"];
+    var entryId = Model.Id;
+}
+
+<div class="entry-details-popup" style="width: 700px; max-height: 90vh; overflow-y: auto; padding: 16px; background: white; overflow-x: hidden; border-top-left-radius: 10px; border-top-right-radius: 10px; backdrop-filter: blur(40px); display: flex; flex-direction: column; align-items: center; position: relative;">
+
+    <!-- Header -->
+    <div style="width: 100%; display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+        <div id="details-header-@entryId" style="color: #252B37; font-size: 16px; font-family: SF Pro; font-weight: 510;">
+            @Model.Date (Reading @entryIndex of @entryTotal)
+        </div>
+        <button type="button" class="close-entry-details" style="all: unset; cursor: pointer;">
+            <div style="width: 30px; height: 30px; background: #F4F4F2; border-radius: 50%; backdrop-filter: blur(27.18px); display: flex; justify-content: center; align-items: center;">
+                <svg viewBox="0 0 24 24" style="width: 16px; height: 16px;">
+                    <path d="M6 6L18 18M6 18L18 6" stroke="#535862" stroke-width="2" stroke-linecap="round" />
+                </svg>
+            </div>
+        </button>
+    </div>
+
+    <!-- View Mode -->
+    <div id="details-view-@entryId" class="entry-details-view" style="width: 100%; background: white; border-radius: 16px; outline: 0.75px solid #D5D7DA; display: flex; flex-direction: column;">
+        <div style="padding: 16px; border-bottom: 1px solid #D5D7DA; display: flex; flex-direction: column; gap: 12px; position: relative;">
+            <button type="button" class="entry-details-edit-toggle" style="all: unset; cursor: pointer; position: absolute; top: 16px; right: 16px;">
+                <svg viewBox="0 0 24 24" fill="none" style="width: 16px; height: 16px;">
+                    <path d="M15.25 4.25l4.5 4.5-12 12H3.25v-4.5l12-12zM14 6l4 4" stroke="#023451" stroke-width="1.33" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+            </button>
+            <div style="display: flex; align-items: center; gap: 6px;">
+                <div style="width: 16px; height: 16px; border: 1.33px solid #033D60;"></div>
+                <div id="details-time-@entryId" style="color: #313537; font-size: 12px;">@Model.Time</div>
+            </div>
+            <div>
+                <span id="details-reading-@entryId" style="color: #313537; font-size: 24px; font-weight: 700;">@Model.Reading</span>
+                <span style="font-size: 12px;">mg/dL</span>
+            </div>
+            <div id="details-meal-@entryId" style="color: #313537; font-size: 12px;">@Model.MealTiming</div>
+        </div>
+
+        <!-- Measurements & Tags -->
+        @if (Model.Measurements != null)
+        {
+            foreach (var measurement in Model.Measurements)
+            {
+                var key = measurement.Name.Replace(" ", "-").ToLower();
+                <div style="padding: 12px 16px; display: flex; justify-content: space-between; align-items: center;">
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <div style="width: 24px; height: 24px; background: #FFE3E1; position: relative;">
+                            <div style="width: 12px; height: 12px; background: #FF453A; position: absolute; top: 6px; left: 6px;"></div>
+                        </div>
+                        <div style="font-size: 14px;">@measurement.Name</div>
+                    </div>
+                    <div id="view-measurement-@key" style="padding: 2px 8px; background: #FAFAFA; border: 1px solid #E9EAEB; border-radius: 9999px; font-size: 12px;">@measurement.Value</div>
+                </div>
+
+                @if (measurement.Tags != null && measurement.Tags.Any())
+                {
+                    <div id="view-tags-@key" style="padding: 0px 16px 12px 16px; display: flex; flex-wrap: wrap; gap: 8px;">
+                        @foreach (var tag in measurement.Tags)
+                        {
+                            <div class="tag-pill" style="padding: 2px 8px; background: #FAFAFA; border: 1px solid #E9EAEB; border-radius: 9999px; font-size: 12px;">@tag</div>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <div id="view-tags-@key" style="padding: 0px 16px 12px 16px; display: flex; flex-wrap: wrap; gap: 8px;"></div>
+                }
+            }
+        }
+
+        <!-- Notes -->
+        @if (!string.IsNullOrEmpty(Model.Notes))
+        {
+            <div style="padding: 16px; border-top: 1px solid #E9EAEB; display: flex; flex-direction: column; gap: 8px;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <div style="width: 24px; height: 24px; background: #E9EAEB;"></div>
+                    <div style="font-size: 14px;">Notes</div>
+                </div>
+                <div style="padding: 12px; border: 1px solid #E9EAEB; border-radius: 8px;">
+                    <div style="font-size: 16px; color: #414651;" id="notes-text-@entryId">@Model.Notes</div>
+                </div>
+            </div>
+        }
+    </div>
+
+    <!-- Edit Mode -->
+    <div id="details-edit-@entryId" class="entry-details-edit" style="display: none; width: 100%; flex-direction: column;">
+
+        <!-- Time -->
+        <div style="padding: 16px 16px 8px 16px;">
+            <label style="font-size: 12px;">Time</label>
+            <input id="edit-time-@entryId" type="text" value="@Model.Time" style="padding: 8px; border-radius: 8px; width: 100%; border: 1px solid #D5D7DA;" />
+        </div>
+
+        <!-- Reading -->
+        <div style="padding: 8px 16px;">
+            <label style="font-size: 12px;">Glucose Reading (mg/dL)</label>
+            <input id="edit-reading-@entryId" type="number" value="@Model.Reading" style="padding: 8px; border-radius: 8px; width: 100%; border: 1px solid #D5D7DA;" />
+        </div>
+
+        <!-- Meal Timing -->
+        <div style="padding: 8px 16px;">
+            <label style="font-size: 12px;">Meal Timing</label>
+            <input id="edit-meal-@entryId" type="text" value="@Model.MealTiming" style="padding: 8px; border-radius: 8px; width: 100%; border: 1px solid #D5D7DA;" />
+        </div>
+
+        <!-- Measurements & Tags -->
+        @if (Model.Measurements != null)
+        {
+            foreach (var m in Model.Measurements)
+            {
+                var key = m.Name.Replace(" ", "-").ToLower();
+                <div style="padding: 12px 16px; display: flex; justify-content: space-between; align-items: center;">
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <div style="width: 24px; height: 24px; background: #FFE3E1; position: relative;">
+                            <div style="width: 12px; height: 12px; background: #FF453A; position: absolute; top: 6px; left: 6px;"></div>
+                        </div>
+                        <div style="font-size: 14px;">@m.Name</div>
+                    </div>
+                    <input type="text" class="edit-measurement-value" data-key="@key" value="@m.Value" style="padding: 2px 8px; background: #FAFAFA; border: 1px solid #E9EAEB; border-radius: 9999px; font-size: 12px; width: auto; min-width: 100px;" />
+                </div>
+
+                <div id="tag-container-@key" style="padding: 0 16px 12px 16px; display: flex; flex-wrap: wrap; gap: 8px;">
+                    @foreach (var tag in m.Tags)
+                    {
+                        <div class="tag-pill" style="padding: 2px 8px; background: #FAFAFA; border: 1px solid #E9EAEB; border-radius: 9999px; font-size: 12px; display: flex; align-items: center; gap: 4px;">
+                            @tag
+                            <button type="button" class="remove-tag" data-key="@key" data-tag="@tag" style="all: unset; cursor: pointer; font-weight: bold; color: #D33;">&times;</button>
+                        </div>
+                    }
+                    <button type="button" class="add-tag-btn" data-key="@key" style="all: unset; cursor: pointer; font-size: 12px; color: #0366d6;">+ Add Tag</button>
+                </div>
+                <div class="add-tag-input-container" id="add-tag-input-container-@key" style="display: none; padding: 0 16px 12px 16px;">
+                    <input type="text" class="add-tag-input" data-key="@key" placeholder="Enter new tag" style="padding: 6px; border: 1px solid #D5D7DA; border-radius: 6px; font-size: 12px;" />
+                    <button type="button" class="confirm-add-tag" data-key="@key" style="margin-left: 8px; font-size: 12px; padding: 4px 8px; background: #2C76AA; color: white; border-radius: 6px; border: none;">Add</button>
+                </div>
+            }
+        }
+
+        <!-- Notes -->
+        <div style="padding: 16px;">
+            <label style="font-size: 12px;">Notes</label>
+            <textarea id="edit-notes-@entryId" style="padding: 8px; border-radius: 8px; width: 100%; border: 1px solid #D5D7DA;">@Model.Notes</textarea>
+        </div>
+
+        <!-- Buttons -->
+        <div style="display: flex; justify-content: flex-end; gap: 8px; padding: 0 16px 16px 16px;">
+            <button type="button" class="entry-details-edit-cancel" style="padding: 6px 12px; border: 1px solid #D5D7DA; border-radius: 8px;">Cancel</button>
+            <button type="button" class="entry-details-edit-save" style="padding: 6px 12px; background: #2C76AA; color: white; border: none; border-radius: 8px;">Save</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    function initializeTagInteractions(popup) {
+        popup.querySelectorAll(".add-tag-btn").forEach(button => {
+            button.addEventListener("click", () => {
+                const key = button.dataset.key;
+                const inputContainer = popup.querySelector(`#add-tag-input-container-${key}`);
+                if (inputContainer) inputContainer.style.display = "block";
+            });
+        });
+
+        popup.querySelectorAll(".confirm-add-tag").forEach(confirmBtn => {
+            confirmBtn.addEventListener("click", () => {
+                const key = confirmBtn.dataset.key;
+                const input = popup.querySelector(`.add-tag-input[data-key='${key}']`);
+                const tag = input.value.trim();
+                if (!tag) return;
+
+                const container = popup.querySelector(`#tag-container-${key}`);
+                const addButton = container.querySelector(`.add-tag-btn[data-key='${key}']`);
+
+                const pill = document.createElement("div");
+                pill.className = "tag-pill";
+                pill.style.cssText = "padding: 2px 8px; background: #FAFAFA; border: 1px solid #E9EAEB; border-radius: 9999px; font-size: 12px; display: flex; align-items: center; gap: 4px;";
+                pill.innerHTML = `${tag}<button type='button' class='remove-tag' style='all: unset; cursor: pointer; font-weight: bold; color: #D33;'>&times;</button>`;
+
+                if (addButton && container.contains(addButton)) {
+                    container.insertBefore(pill, addButton);
+                } else {
+                    container.appendChild(pill);
+                }
+
+                input.value = "";
+                popup.querySelector(`#add-tag-input-container-${key}`).style.display = "none";
+
+                pill.querySelector(".remove-tag").addEventListener("click", () => pill.remove());
+            });
+        });
+
+        popup.querySelectorAll(".remove-tag").forEach(btn => {
+            btn.addEventListener("click", () => btn.parentElement.remove());
+        });
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+        document.querySelectorAll(".entry-details-popup").forEach(popup => {
+            const entryId = popup.querySelector(".entry-details-edit")?.id?.replace("details-edit-", "");
+            if (!entryId) return;
+
+            initializeTagInteractions(popup);
+
+            popup.querySelector(".close-entry-details")?.addEventListener("click", function (e) {
+                e.stopPropagation();
+                const modal = popup.closest(".entry-details-modal");
+                if (modal) modal.style.display = "none";
+            });
+
+            popup.querySelector(".entry-details-edit-toggle")?.addEventListener("click", function () {
+                popup.querySelector(".entry-details-view").style.display = "none";
+                popup.querySelector(".entry-details-edit").style.display = "flex";
+            });
+
+            popup.querySelector(".entry-details-edit-cancel")?.addEventListener("click", function () {
+                popup.querySelector(".entry-details-edit").style.display = "none";
+                popup.querySelector(".entry-details-view").style.display = "flex";
+            });
+
+            popup.querySelector(".entry-details-edit-save")?.addEventListener("click", function () {
+                // Save basic fields
+                const newTime = popup.querySelector(`#edit-time-${entryId}`)?.value.trim();
+                const newReading = popup.querySelector(`#edit-reading-${entryId}`)?.value.trim();
+                const newMeal = popup.querySelector(`#edit-meal-${entryId}`)?.value.trim();
+                const newNotes = popup.querySelector(`#edit-notes-${entryId}`)?.value.trim();
+
+                const timeEl = popup.querySelector(`#details-time-${entryId}`);
+                const readingEl = popup.querySelector(`#details-reading-${entryId}`);
+                const mealEl = popup.querySelector(`#details-meal-${entryId}`);
+                const notesEl = popup.querySelector(`#notes-text-${entryId}`);
+
+                if (timeEl) timeEl.textContent = newTime;
+                if (readingEl) readingEl.textContent = newReading;
+                if (mealEl) mealEl.textContent = newMeal;
+                if (notesEl) notesEl.textContent = newNotes || "";
+
+                if (entryId) {
+                    const timeBox = document.getElementById(`entry-time-${entryId}`);
+                    const readingBox = document.getElementById(`entry-reading-${entryId}`);
+                    const mealBox = document.getElementById(`entry-mealtiming-${entryId}`);
+
+                    const oldTime = timeBox?.textContent;
+
+                    if (timeBox) timeBox.textContent = newTime;
+                    if (readingBox) readingBox.textContent = newReading;
+                    if (mealBox) mealBox.textContent = newMeal;
+
+                    const entryWrapper = document.getElementById(`entryWrapper-${entryId}`);
+                    if (entryWrapper) {
+                        const timeInput = entryWrapper.querySelector(".edit-time");
+                        const readingInput = entryWrapper.querySelector(".edit-reading");
+                        const mealInput = entryWrapper.querySelector(".edit-meal");
+
+                        if (timeInput) timeInput.value = newTime;
+                        if (readingInput) readingInput.value = newReading;
+                        if (mealInput) mealInput.value = newMeal;
+                    }
+
+                    if (typeof updateGlucoseGraph === 'function') {
+                        updateGlucoseGraph(newTime, newReading, oldTime);
+                    }
+                }
+
+                // Save updated measurement values
+                popup.querySelectorAll(".edit-measurement-value").forEach(input => {
+                    const key = input.dataset.key;
+                    const newVal = input.value.trim();
+                    const viewEl = popup.querySelector(`#view-measurement-${key}`);
+                    if (viewEl) viewEl.textContent = newVal;
+                });
+
+                // Save updated tags
+                popup.querySelectorAll('[id^="tag-container-"]').forEach(editTagContainer => {
+                    const key = editTagContainer.id.replace("tag-container-", "");
+                    const viewTagContainer = popup.querySelector(`#view-tags-${key}`);
+                    if (!viewTagContainer) return;
+
+                    viewTagContainer.innerHTML = "";
+                    editTagContainer.querySelectorAll(".tag-pill").forEach(newTagEl => {
+                        const tagText = newTagEl.textContent.replace("×", "").trim();
+                        const tagDiv = document.createElement("div");
+                        tagDiv.className = "tag-pill";
+                        tagDiv.style.cssText = "padding: 2px 8px; background: #FAFAFA; border: 1px solid #E9EAEB; border-radius: 9999px; font-size: 12px;";
+                        tagDiv.textContent = tagText;
+                        viewTagContainer.appendChild(tagDiv);
+                    });
+                });
+
+                fetch('/Api/UpdateEntry', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body: new URLSearchParams({
+                        id: entryId,
+                        time: newTime,
+                        reading: newReading,
+                        mealTiming: newMeal,
+                        notes: newNotes
+                    })
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if (!data.success) {
+                        alert("Failed to save changes.");
+                    }
+                })
+                .catch(() => alert("Error occurred while saving changes."));
+
+                // Toggle back to view mode
+                popup.querySelector(".entry-details-edit").style.display = "none";
+                popup.querySelector(".entry-details-view").style.display = "flex";
+            });
+        });
+    });
+
+    function updateEntryDetails(entryId, newTime, newReading, newMealTiming) {
+        const timeEl = document.getElementById('details-time-' + entryId);
+        const readingEl = document.getElementById('details-reading-' + entryId);
+        const mealEl = document.getElementById('details-meal-' + entryId);
+        if (timeEl) timeEl.textContent = newTime;
+        if (readingEl) readingEl.textContent = newReading;
+        if (mealEl) mealEl.textContent = newMealTiming;
+    }
+</script>

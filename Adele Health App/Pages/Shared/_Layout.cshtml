@@ -1,0 +1,98 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Adele_Health_App</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/Adele_Health_App.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+</head>
+
+<body>
+    <div class="d-flex">
+        <!-- Sidebar -->
+        <nav class="flex-column p-3"
+            style="position: fixed; top: 0; left: 0; width: 384px; height: 100vh; background-color: white; border-top-right-radius: 70px; border-right: 2px solid #ccc; overflow-y: auto;">
+            <img src="~/images/adeleyoumatter.png" alt="Adele Logo" class="img-fluid mx-auto d-block mb-4"
+                style="max-width: 200px; margin-top: 98px;" />
+            <a class="nav-link text-dark sidebar-link @(Context.Request.Path == "/" ? "active-page" : "")" asp-area=""
+                asp-page="/Index" style="margin-bottom: 10px;">
+                <img src="~/images/chat.png" alt="Chat Icon" style="width: 24px; height: 24px;" />
+                Ask AdeleAI
+            </a>
+            <a class="nav-link text-dark sidebar-link @(Context.Request.Path == "/Journal" ? "active-page" : "")"
+                asp-area="" asp-page="/Journal" style="margin-bottom: 10px;">
+                <img src="~/images/journal1.png" alt="Journal Icon" style="width: 24px; height: 24px;" />
+                Journal
+            </a>
+            <a class="nav-link text-dark sidebar-link @(Context.Request.Path == "/Discover" ? "active-page" : "")"
+                asp-area="" asp-page="/Discover" style="margin-bottom: 10px;">
+                <img src="~/images/discover1.png" alt="Discover Icon" style="width: 24px; height: 24px;" />
+                Discover
+            </a>
+
+
+            <div style="display: flex; justify-content: center; margin-top: 40px;">
+                <form method="get" asp-page="/Logging">
+                    <button type="submit"
+                            style="display: flex; align-items: center; gap: 8px; border: 2px solid #004F71; color: #004F71; background-color: white; font-weight: 600; padding: 8px 14px; border-radius: 8px;">
+                        <span style="font-size: 20px;">+</span>
+                        Log a Reading
+                    </button>
+                </form>
+            </div>
+
+            <img src="~/images/ai.png" alt="Adele Logo" class="img-fluid mx-auto mb-4"
+                style="max-width: 280px; margin-top: 158px;" />
+
+            <a class="nav-link text-dark sidebar-link @(Context.Request.Path == "/Settings" ? "active-page" : "")"
+                asp-area="" asp-page="/Settings" style="margin-bottom: 10px;">
+                <img src="~/images/settings.png" alt="Settings Icon" style="width: 24px; height: 24px;" />
+                Settings
+            </a>
+            <a class="nav-link text-dark sidebar-link @(Context.Request.Path == "/Support" ? "active-page" : "")"
+                asp-area="" asp-page="/Support" style="margin-bottom: 10px;">
+                <img src="~/images/support.png" alt="Support Icon" style="width: 24px; height: 24px;" />
+                Support
+            </a>
+            <a id="manage" class="nav-link text-dark sidebar-link" asp-area="Identity" asp-page="/Account/Manage/Index"
+                style="margin-bottom: 10px;">
+                User Settings
+            </a>
+            <form id="logoutForm" class="form-inline" asp-area="Identity" asp-page="/Account/Logout"
+                asp-route-returnUrl="@Url.Page("/Index", new { area = "" })" method="post">
+                <button id="logout" type="submit" class="nav-link btn btn-link text-dark border-0"
+                    style="display: flex; align-items: center;">
+                    <img src="~/images/signout.png" alt="Sign Out Icon"
+                        style="width: 24px; height: 24px; margin-right: 8px;" />
+                    Sign Out
+                </button>
+            </form>
+
+
+
+
+        </nav>
+
+        <!-- Main Content -->
+        <div class="flex-fill p-4" style="margin-left: 384px; width: calc(100% - 384px);">
+            <main role="main" class="pb-3">
+                @RenderBody()
+            </main>
+        </div>
+    </div>
+
+    @* Chat Box Section: Rendered below the main content *@
+    @RenderSection("ChatBox", required: false)
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+
+</html>

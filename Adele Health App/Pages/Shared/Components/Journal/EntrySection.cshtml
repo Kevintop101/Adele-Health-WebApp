@@ -1,0 +1,22 @@
+@model Adele_Health_App.Models.EntrySectionModel
+
+<div style="align-self: stretch; margin-left: 5px; display: flex; flex-direction: column; justify-content: flex-start; align-items: flex-start; gap: 12px; margin-bottom: 16px;">
+    <!-- Date header -->
+    <partial name="~/Pages/Shared/Components/Journal/DateSection.cshtml" model="Model.DateText" />
+
+    <!-- Entries grid -->
+    <div style="margin-left: 5px">
+        <div style="align-self: stretch; display: inline-flex; flex-wrap: wrap; gap: 12px; align-content: flex-start;">
+            @for (int i = 0; i < Model.Entries.Count; i++)
+            {
+                var entry = Model.Entries[i];
+                var viewData = new ViewDataDictionary(ViewData)
+                {
+                    { "EntryIndex", i + 1 },
+                    { "EntryTotal", Model.Entries.Count }
+                };
+                <partial name="~/Pages/Shared/Components/Journal/Entry.cshtml" model="entry" view-data="viewData" />
+            }
+        </div>
+    </div>
+</div>

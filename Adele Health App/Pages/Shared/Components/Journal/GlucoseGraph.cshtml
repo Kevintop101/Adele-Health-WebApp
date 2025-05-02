@@ -1,0 +1,113 @@
+@model List<Adele_Health_App.Models.EntrySectionModel>
+@using System.Globalization
+@using System.Text.Json
+@{
+    var glucosePoints = new List<(string Time, int Glucose)>();
+    foreach (var section in Model)
+    {
+        foreach (var entry in section.Entries)
+        {
+            if (int.TryParse(entry.Reading, out int glucose))
+            {
+                glucosePoints.Add((entry.Time, glucose));
+            }
+        }
+    }
+    glucosePoints = glucosePoints.OrderBy(p => DateTime.ParseExact(p.Time, "h:mm tt", CultureInfo.InvariantCulture)).ToList();
+    var averageGlucose = glucosePoints.Count > 0 ? (int)glucosePoints.Average(p => p.Glucose) : 0;
+}
+
+<div style="align-self: stretch; padding: 16px; background: white; border-radius: 16px; outline: 1px #DFDFDF solid; outline-offset: -1px; display: flex; flex-direction: column; gap: 16px;">
+    <!-- Header with Icon and Title -->
+    <div style="display: flex; align-items: center; gap: 8px;">
+        <div style="width: 24px; height: 24px; position: relative;">
+            <div style="width: 24px; height: 24px; background: #FFE3E1; position: absolute; top: 0; left: 0;"></div>
+            <div style="width: 13.33px; height: 13.33px; background: #FF453A; position: absolute; top: 5.33px; left: 5.33px;"></div>
+        </div>
+        <div style="color: #252B37; font-size: 16px; font-family: SF Pro; font-weight: 700;">Glucose</div>
+    </div>
+
+    <!-- Graph Area -->
+    <div style="display: flex; align-items: stretch; gap: 12px;">
+        <!-- Left Side: Average Info -->
+        <div style="display: flex; flex-direction: column; justify-content: center; align-items: flex-start; gap: 4px;">
+            <div>
+                <span id="average-glucose" style="color: #313537; font-size: 24px; font-family: SF Pro; font-weight: 700;">@averageGlucose</span>
+                <span style="color: #313537; font-size: 12px; font-family: SF Pro; font-weight: 700;">mg/dL</span>
+            </div>
+            <div style="color: #313537; font-size: 12px; font-family: SF Pro; font-weight: 400;">Average</div>
+        </div>
+
+        <!-- Chart -->
+        <div style="flex: 1; height: 200px;">
+            <canvas id="glucoseChart"></canvas>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+let glucosePoints = @Html.Raw(JsonSerializer.Serialize(glucosePoints.Select(p => new { p.Time, p.Glucose })));
+
+document.addEventListener("DOMContentLoaded", function () {
+    const ctx = document.getElementById('glucoseChart').getContext('2d');
+    window.glucoseChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: glucosePoints.map(p => p.Time),
+            datasets: [{
+                label: 'Glucose (mg/dL)',
+                data: glucosePoints.map(p => p.Glucose),
+                borderColor: '#FF453A',
+                backgroundColor: '#FF453A',
+                tension: 0.3,
+                pointRadius: 4,
+                pointBackgroundColor: '#FF453A',
+                fill: false,
+                borderWidth: 2,
+                showLine: true
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: false,
+                    ticks: {
+                        stepSize: 10
+                    }
+                },
+                x: {
+                    ticks: {
+                        autoSkip: false,
+                        maxRotation: 45,
+                        minRotation: 45
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    display: false
+                }
+            }
+        }
+    });
+});
+
+// 🔥 Function to update graph and average after editing an entry
+function updateGlucoseGraph(newTime, newGlucose, oldTime) {
+    const pointIndex = glucosePoints.findIndex(p => p.Time === oldTime);
+    if (pointIndex !== -1) {
+        glucosePoints[pointIndex] = { Time: newTime, Glucose: parseInt(newGlucose) };
+    }
+    glucosePoints.sort((a, b) => new Date('1970/01/01 ' + a.Time) - new Date('1970/01/01 ' + b.Time));
+
+    window.glucoseChart.data.labels = glucosePoints.map(p => p.Time);
+    window.glucoseChart.data.datasets[0].data = glucosePoints.map(p => p.Glucose);
+    window.glucoseChart.update();
+
+    const avg = glucosePoints.length > 0 ? Math.round(glucosePoints.reduce((sum, p) => sum + p.Glucose, 0) / glucosePoints.length) : 0;
+    document.getElementById('average-glucose').textContent = avg;
+}
+</script>
